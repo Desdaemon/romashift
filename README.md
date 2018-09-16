@@ -6,6 +6,6 @@ Install AutoHotkey (v1.1.30.00+) and run romaja.ahk.
 For compiled executable, use ahk2exe.
 
 ## TODO
-* Support for 2-beolsik learners
+* Support for 2-beolsik, 3-beolsik learners
 * Custom keybinds  
 * Polishing  
