@@ -21,6 +21,32 @@ IniRead, R_WindowsBoot, rm_settings.ini, System, StartWithWindows, 1
 IniRead, R_OpenDialog, rm_settings.ini, System, DialogOnStart, 0
 IniRead, R_RefreshDelay, rm_settings.ini, System, RefreshDelay, 5
 
+; Initializations for SCIM Romaja
+
+chara := ComObjCreate("Scripting.Dictionary")
+current_string = 
+current_chara = 
+current_key = 
+
+Loop, read, tables/HangulRomaja.txt
+{
+    LineNumber = %A_Index%
+    Loop, parse, A_LoopReadLine, %A_Space%
+    {
+		if (A_Index = 2) {
+			;MsgBox, 4,, Chara %A_LoopField%
+			;IfMsgBox No
+			;	exit
+			chara.item(key_to_append) := A_LoopField
+			continue
+		}
+		;MsgBox, 4,, Key %A_LoopField%
+		;IfMsgBox No
+		;	exit
+		key_to_append := A_LoopField
+    }
+}
+
 ; Initializations for Native Input
 
 HC := 0 ; Head character, initial consonant
