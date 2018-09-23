@@ -1,4 +1,4 @@
-# RomaShift v1
+# RomaShift v2
 Romaja input supporter for Hangul.
 
 ## Running the code
@@ -7,5 +7,5 @@ For compiled executable, use ahk2exe.
 
 ## TODO
 * Support for 2-beolsik, 3-beolsik learners
-* Custom keybinds  
-* Polishing  
+* Editing of Romaja table
+* Polishing
