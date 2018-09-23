@@ -14,7 +14,7 @@ if R_VerboseTip {
 	TrayTip, RomaShift for Dubeolsik, is now %newActive%.,2
 }
 menuIcon := isActive ? "rs_on.ico" : "rs_off.ico"
-Menu, Tray, Icon, %menuIcon%
+Menu, Tray, Icon, icons\%menuIcon%
 return
 
 Toggle_isActive:
