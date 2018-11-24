@@ -32,6 +32,9 @@ c::
 b::
 n::
 m::
+x::
+v::
+f::
 current_string .= A_ThisHotkey	; append key to stack
 ;ToolTip, %current_string%, A_CaretX, A_CaretY + 35
 Gosub SearchLoop	; search for chara, return chara if exist
@@ -71,6 +74,8 @@ return
 +o::
 +y::
 +w::
++v::
++f::
 current_key := Format("{:U}", LTrim(A_ThisHotkey, "+"))
 current_string .= current_key
 ;ToolTip, %current_string%, A_CaretX, A_CaretY + 35
@@ -96,9 +101,11 @@ if (chara.item(theft_string) <> "") {
 }
 return
 
-f::
-Send {Right}
-;ToolTip,
+Right::
+Left::
+Up::
+Down::
+Send {%A_ThisHotkey%}
 current_string = 
 return
 
@@ -119,19 +126,13 @@ current_string =
 Send {Backspace}
 return
 
-*Space::
+Space::
+Enter::
 ;ToolTip,
-doDeselect := !(A_PriorKey = "Space") ? "{Right}" : "" 
-Send %doDeselect%
-Send {Space}
-current_string = 
-return
-
-*Enter::
-;ToolTip,
-doDeselect := !(A_PriorKey = "Space") ? "{Right}" : "" 
-Send %doDeselect%
-Send {Enter}
+if (A_PriorKey <> A_ThisHotkey) {
+	Send {Right}
+}
+Send {%A_ThisHotkey%}
 current_string = 
 return
 
@@ -182,8 +183,9 @@ Send %A_ThisHotkey%
 return
 
 SearchLoop:
-if (chara.item(current_string) <> "") {
-	current_chara := chara.item(current_string)
+result := chara.item(current_string)
+if (result <> "") {
+	current_chara := result
 	Send {%current_chara%}
 	Send +{Left}
 	Exit
@@ -191,8 +193,9 @@ if (chara.item(current_string) <> "") {
 return
 
 SubSearchLoop:
-if (chara.item(current_string) <> "") {
-	current_chara := chara.item(current_string)
+result := chara.item(current_string)
+if (result <> "") {
+	current_chara := result
 	Send {%current_chara%}
 	Send +{Left}
 	return
