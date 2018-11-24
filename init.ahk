@@ -6,6 +6,8 @@
 	IniWrite, 1, rm_settings.ini, System, StartWithWindows
 	IniWrite, 0, rm_settings.ini, System, DialogOnStart
 	IniWrite, 5, rm_settings.ini, System, RefreshDelay
+	; V2.1+
+	IniWrite, HangulRomaja.txt, rm_settings.ini, General, ScimTable
 	MsgBox, 36,, It looks like this is the first time you've run RomaShift.`r`nWould you like to open the help dialog?
 	IfMsgBox Yes
 		new_run := 1
@@ -20,6 +22,8 @@ IniRead, R_VerboseTip, rm_settings.ini, General, VerboseTip, 0
 IniRead, R_WindowsBoot, rm_settings.ini, System, StartWithWindows, 1
 IniRead, R_OpenDialog, rm_settings.ini, System, DialogOnStart, 0
 IniRead, R_RefreshDelay, rm_settings.ini, System, RefreshDelay, 5
+; V2.1+
+IniRead, R_CurrentTable, rm_settings.ini, General, ScimTable
 
 ; Initializations for SCIM Romaja
 
@@ -28,21 +32,15 @@ current_string =
 current_chara = 
 current_key = 
 
-Loop, read, tables/HangulRomaja.txt
+Loop, read, tables\%R_CurrentTable%
 {
-    LineNumber = %A_Index%
+    LineNumber := A_Index
     Loop, parse, A_LoopReadLine, %A_Space%
     {
 		if (A_Index = 2) {
-			;MsgBox, 4,, Chara %A_LoopField%
-			;IfMsgBox No
-			;	exit
 			chara.item(key_to_append) := A_LoopField
 			continue
 		}
-		;MsgBox, 4,, Key %A_LoopField%
-		;IfMsgBox No
-		;	exit
 		key_to_append := A_LoopField
     }
 }

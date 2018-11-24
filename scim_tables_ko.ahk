@@ -22,19 +22,19 @@ p::
 a::
 s::
 d::
+f::
 g::
 h::
 j::
 k::
 l::
 z::
+x::
 c::
+v::
 b::
 n::
 m::
-x::
-v::
-f::
 current_string .= A_ThisHotkey	; append key to stack
 ;ToolTip, %current_string%, A_CaretX, A_CaretY + 35
 Gosub SearchLoop	; search for chara, return chara if exist
@@ -61,21 +61,32 @@ if (chara.item(theft_string) <> "") {
 }
 return
 
-+g::
-+d::
-+b::
-+s::
-+j::
-+z::
-+a::
-+i::
-+u::
-+e::
-+o::
-+y::
++q::
 +w::
-+v::
++e::
++r::
++t::
++y::
++u::
++i::
++o::
++p::
++a::
++s::
++d::
 +f::
++g::
++h::
++j::
++k::
++l::
++z::
++x::
++c::
++v::
++b::
++n::
++m::
 current_key := Format("{:U}", LTrim(A_ThisHotkey, "+"))
 current_string .= current_key
 ;ToolTip, %current_string%, A_CaretX, A_CaretY + 35

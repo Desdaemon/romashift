@@ -1,4 +1,6 @@
-﻿Menu, Tray, Add, Native Input, Toggle_R_InputMode, +Radio
+﻿; Tray menu
+
+Menu, Tray, Add, Native Input, Toggle_R_InputMode, +Radio
 Menu, Tray, Add, Dubeolshift, Toggle_R_InputMode, +Radio
 Menu, Tray, Add, SCIM Romaja, Toggle_R_InputMode, +Radio
 if (R_InputMode = 1) {
@@ -32,6 +34,9 @@ Menu, Tray, Default, Options
 Gosub Update_isActive
 Menu, Tray, NoStandard
 
+;======================================
+; Main dialog
+
 Gosub GUI_Initialize
 Gosub GUI_Help_Initialize
 
@@ -40,36 +45,44 @@ Gui, New
 Gui +HwndGuiHwnd
 Gui, -MaximizeBox -MinimizeBox
 
-Gui, Add, GroupBox, x12 y6 w220 h180 , Options
+Gui, Add, GroupBox, x12 y9 w230 h190 , Options
 Gui, Add, Text, x22 y32 w60 h20 +Center, Input Mode
-Gui, Add, DropDownList, x82 y29 w140 Choose%R_InputMode% gUpdate_R_InputMode vR_InputMode AltSubmit, Native Input|Dubeolshift|SCIM Romaja
+Gui, Add, DropDownList, x92 y29 w140 Choose%R_InputMode% gUpdate_R_InputMode vR_InputMode AltSubmit, Native Input|Dubeolshift|SCIM Romaja
+Gui, Add, Text, x22 y59 w60 h20 +Center, SCIM Table
+Gui, Add, Text, x92 y59 w90 h20 vR_CurrentTable, %R_CurrentTable%
+Gui, Add, Button, x192 y59 w40 h20 , Load
 
-Gui, Add, CheckBox, x22 y59 w150 h20 Checked%isActive% visActive, Do character conversion
-Gui, Add, CheckBox, x22 y79 w150 h20 Checked%R_LeadingSilent% vR_LeadingSilent, Automatic silent ieung (ㅇ)
-Gui, Add, CheckBox, x22 y99 w150 h20 Checked%R_VerboseTip% vR_VerboseTip, Display all notifications
-Gui, Add, Text, x22 y129 w200 h20 , Windows change refresh delay
-Gui, Add, Slider, x22 y149 w200 h30 ToolTip +Range1-30 vR_RefreshDelay, %R_RefreshDelay%
+Gui, Add, CheckBox, x22 y79 w150 h20 Checked%isActive% visActive, Do character conversion
+Gui, Add, CheckBox, x22 y99 w150 h20 Checked%R_LeadingSilent% vR_LeadingSilent, Automatic silent ieung (ㅇ)
+Gui, Add, CheckBox, x22 y119 w150 h20 Checked%R_VerboseTip% vR_VerboseTip, Display all notifications
+Gui, Add, Text, x22 y139 w160 h20 , Windows change refresh delay
+Gui, Add, Slider, x22 y159 w210 h30 ToolTip +Range1-30 vR_RefreshDelay, %R_RefreshDelay%
 
 Gosub Update_R_InputMode
 
-Gui, Add, GroupBox, x12 y199 w220 h70 , System
-Gui, Add, CheckBox, x22 y219 w150 h20 Checked%R_WindowsBoot% vR_WindowsBoot, Start with Windows
-Gui, Add, CheckBox, x22 y239 w150 h20 Checked%R_OpenDialog% vR_OpenDialog, Show this dialog on start
+Gui, Add, GroupBox, x12 y209 w230 h70 , System
+Gui, Add, CheckBox, x22 y229 w150 h20 Checked%R_WindowsBoot% vR_WindowsBoot, Start with Windows
+Gui, Add, CheckBox, x22 y249 w150 h20 Checked%R_OpenDialog% vR_OpenDialog, Show this dialog on start
 
-Gui, Add, Button, x12 y279 w70 h30 Default, &OK
-Gui, Add, Button, x162 y279 w70 h30 , &Apply
-Gui, Add, Button, x87 y279 w70 h30 , &Cancel
-Gui, Add, Button, x12 y316 w70 h30 gOpenHelpDialog, &Help
-Gui, Add, Button, x87 y316 w70 h30 gDefaultSettings, &Restore to Defaults
-Gui, Add, Button, x162 y316 w70 h30 gTerminate, E&xit
+Gui, Add, Button, x12 y289 w70 h30 Default, O&K
+Gui, Add, Button, x12 y329 w70 h30 gOpenHelpDialog, &Help
+Gui, Add, Button, x12 y369 w70 h30 gOpenFolder, &Open Tables Folder
 
-; Gui, Add, Button, x12 y352 w220 h30 gOpenConfig visConfig Disabled, Keybinds >
-Gui, Add, Button, x12 y352 w220 h30 Disabled, Keybinds >
+Gui, Add, Button, x92 y289 w70 h30 , &Cancel
+Gui, Add, Button, x92 y329 w70 h30 gDefaultSettings, &Restore to Defaults
+Gui, Add, Button, x92 y369 w70 h30 gEditTable, &Edit Current Table
+
+Gui, Add, Button, x172 y289 w70 h30 , &Apply
+Gui, Add, Button, x172 y329 w70 h30 gTerminate, E&xit
+Gui, Add, Button, x172 y369 w70 h30 gResetTable, Reset &Default Tables
 
 if R_OpenDialog {
 	Gui, Show, AutoSize, RomaShift %R_CurrentBuild%, Guiwindow
 }
 return
+
+;======================================
+; Help dialog
 
 GUI_Help_Initialize:
 Gui Help:New
@@ -131,10 +144,11 @@ The silent ieung is somewhat unreliable, which can be remedied with manual input
 
 ..: SCIM Romaja :..
 A port of the SCIM Hangul Romaja input method for POSIX systems. Functionality is similar to Native Input.
-The character table is fully customizable.
-Mappings are carried over from SCIM, with the following exceptions:
+You can modify this input mode by editing %APPDATA%\romashift\tables\HangulRomaja.txt.
+If you mess up, use "Reset All Tables".
+Mappings are carried over from SCIM, with the following additions:
 
-'yeo' and 'y', 'u' and 'w' are interchangeable for single vowels.
+'yeo' and 'y', 'u' and 'w' are interchangeable if they stand alone.
 'c' is interchangeable with 'k' and 'q'.
 'f' is the commit key.
 
@@ -142,6 +156,9 @@ Double consonants are either double or uppercase letters.
 Complex vowels can be inputted in two ways: sound and spelling.
 For example, the vowel ㅙ can be written as 'wae' or 'oai'.
 The silent ieung is automatic, whereas the final ieung is always 'ng'.
+* NEW V2.1 * "ae", "eu" and "eo" can now be typed as "ev", "uv" and "ov" respectively.
+* NEW V2.1 * The manual silent ieung key is "v" and can be used to commit a word quickly.
+For example, 한국어 can be typed as either "hangugfeo", "hangugfov", "hangugveo" or "hangugvov".
 )
 
 Gui Help:Font, s10, Segoe UI
@@ -354,7 +371,7 @@ return
 
 ButtonApply:
 Gui, Submit, NoHide
-WriteSettings(R_InputMode,isActive,R_LeadingSilent,R_VerboseTip,R_WindowsBoot,R_OpenDialog,R_RefreshDelay)
+Gosub WriteSettingsSub
 Gosub Update_isActive
 Gosub UpdateTrayMenu
 if (R_InputMode = 2) {
@@ -365,7 +382,7 @@ return
 
 ButtonOK:
 Gui, Submit
-WriteSettings(R_InputMode,isActive,R_LeadingSilent,R_VerboseTip,R_WindowsBoot,R_OpenDialog,R_RefreshDelay)
+Gosub WriteSettingsSub
 Gosub Update_isActive
 Gosub UpdateTrayMenu
 if (R_InputMode = 2) {
@@ -417,7 +434,7 @@ else if (R_InputMode = 3) {
 	Menu, Tray, Uncheck, Dubeolshift
 	Menu, Tray, Check, SCIM Romaja
 }
-WriteSettings(R_InputMode, isActive, R_LeadingSilent)
+Gosub WriteSettingsSub
 isActiveTray := isActive?"Check":"Uncheck"
 R_LeadingSilentTray := R_LeadingSilent?"Check":"Uncheck"
 Menu, Tray, %isActiveTray%, Do character conversion`tAlt+1
@@ -436,3 +453,25 @@ return
 OpenSettings:
 Run, ms-settings:regionlanguage
 return
+
+OpenFolder:
+Run, explore tables
+return
+
+EditTable:
+Run, edit tables\%R_CurrentTable%
+return
+
+ButtonLoad:
+PreviousTable := R_CurrentTable
+FileSelectFile, R_CurrentTable,, tables, Select SCIM Table File, Documents (*.txt)
+if (ErrorLevel = 0) {
+	SplitPath, R_CurrentTable, R_CurrentTable
+	IniWrite, %R_CurrentTable%, rm_settings.ini, General, ScimTable
+	GuiControl,, R_CurrentTable, %R_CurrentTable%
+	Gosub UpdateTable
+	return
+}
+else R_CurrentTable := PreviousTable
+return
+

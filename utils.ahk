@@ -6,6 +6,8 @@ IniRead, R_VerboseTip, rm_settings.ini, General, VerboseTip, 0
 IniRead, R_WindowsBoot, rm_settings.ini, System, StartWithWindows, 1
 IniRead, R_OpenDialog, rm_settings.ini, System, DialogOnStart, 0
 IniRead, R_RefreshDelay, rm_settings.ini, System, RefreshDelay, 5
+; V2.1+
+IniRead, R_CurrentTable, rm_settings.ini, General, ScimTable, "HangulRomaja.txt"
 return
 
 Update_isActive:
@@ -48,16 +50,44 @@ Terminate:
 ExitApp
 return
 
-WriteSettings(R_InputMode:=1, isActive:=1, R_LeadingSilent:=1, R_VerboseTip:=0, R_WindowsBoot:=1, R_OpenDialog:=0, R_RefreshDelay:=5) {
-	IniWrite, %R_InputMode%, rm_settings.ini, General, InputMode
-	IniWrite, %isActive%, rm_settings.ini, General, DoConversion
-	IniWrite, %R_LeadingSilent%, rm_settings.ini, General, LeadingSilent
-	IniWrite, %R_VerboseTip%, rm_settings.ini, General, VerboseTip
-	IniWrite, %R_WindowsBoot%, rm_settings.ini, System, StartWithWindows
-	IniWrite, %R_OpenDialog%, rm_settings.ini, System, DialogOnStart
-	IniWrite, %R_RefreshDelay%, rm_settings.ini, System, RefreshDelay
-	Gosub Update_R_WindowsBoot
+WriteSettingsSub:
+IniWrite, %R_InputMode%, rm_settings.ini, General, InputMode
+IniWrite, %isActive%, rm_settings.ini, General, DoConversion
+IniWrite, %R_LeadingSilent%, rm_settings.ini, General, LeadingSilent
+IniWrite, %R_VerboseTip%, rm_settings.ini, General, VerboseTip
+IniWrite, %R_WindowsBoot%, rm_settings.ini, System, StartWithWindows
+IniWrite, %R_OpenDialog%, rm_settings.ini, System, DialogOnStart
+IniWrite, %R_RefreshDelay%, rm_settings.ini, System, RefreshDelay
+Gosub Update_R_WindowsBoot
+return
+
+UpdateTable:
+chara.RemoveAll()
+current_string = 
+current_chara = 
+current_key = 
+
+Loop, read, tables\%R_CurrentTable%
+{
+    LineNumber := A_Index
+    Loop, parse, A_LoopReadLine, %A_Space%
+    {
+		if (A_Index = 2) {
+			chara.item(key_to_append) := A_LoopField
+			continue
+		}
+		key_to_append := A_LoopField
+    }
 }
+return
+
+ResetTable:
+MsgBox, 52, Warning, All default tables will be overwritten. Proceed?
+IfMsgBox, No
+	return
+FileCopy, tables\default\*.txt, tables\*.txt, 1
+FileSetAttrib, -RH, tables\*.txt,
+return
 
 DoReload:
 if (R_VerboseTip) {
