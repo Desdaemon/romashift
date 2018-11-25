@@ -106,7 +106,6 @@ Q/F`tCommits current character.
 
 ..: Installing Korean IME :..
 Installing the Korean Input Method Editor (IME) on your system will enable the Dubeolshift input mode and allows for Hanja conversion in Native Input. (default Right Ctrl)
-
 [Note]
 The "Go to Region & Language" button can be used to access the settings screen.
 
@@ -144,8 +143,8 @@ The silent ieung is somewhat unreliable, which can be remedied with manual input
 
 ..: SCIM Romaja :..
 A port of the SCIM Hangul Romaja input method for POSIX systems. Functionality is similar to Native Input.
-You can modify this input mode by editing %APPDATA%\romashift\tables\HangulRomaja.txt.
-If you mess up, use "Reset All Tables".
+You can modify this input mode by editing `%APPDATA`%\romashift\tables\HangulRomaja.txt.
+If you mess up, use "Reset Default Tables".
 Mappings are carried over from SCIM, with the following additions:
 
 'yeo' and 'y', 'u' and 'w' are interchangeable if they stand alone.
@@ -374,6 +373,7 @@ Gui, Submit, NoHide
 Gosub WriteSettingsSub
 Gosub Update_isActive
 Gosub UpdateTrayMenu
+Gosub CleanSub
 if (R_InputMode = 2) {
 	Goto SentryLoop
 	return
@@ -385,6 +385,7 @@ Gui, Submit
 Gosub WriteSettingsSub
 Gosub Update_isActive
 Gosub UpdateTrayMenu
+Gosub CleanSub
 if (R_InputMode = 2) {
 	Goto SentryLoop
 	return
@@ -400,6 +401,7 @@ Gui Help:Hide
 return
 
 Update_R_InputMode:
+Old_InputMode := R_InputMode
 GuiControlGet, toEnable,, R_InputMode
 toEnable := (toEnable = 2)?1:0 ; position in DropDownBox
 GuiControl, Enable%toEnable%, R_LeadingSilent
@@ -463,15 +465,28 @@ Run, edit tables\%R_CurrentTable%
 return
 
 ButtonLoad:
+if (R_InputMode <> 3) {
+	MsgBox, Please change input mode to SCIM Romaja first and try again.
+	return
+}
 PreviousTable := R_CurrentTable
 FileSelectFile, R_CurrentTable,, tables, Select SCIM Table File, Documents (*.txt)
 if (ErrorLevel = 0) {
 	SplitPath, R_CurrentTable, R_CurrentTable
 	IniWrite, %R_CurrentTable%, rm_settings.ini, General, ScimTable
 	GuiControl,, R_CurrentTable, %R_CurrentTable%
-	Gosub UpdateTable
+	Gosub ScimInit
 	return
 }
 else R_CurrentTable := PreviousTable
 return
 
+CleanSub:
+EmptyMem()
+if (Old_InputMode <> R_InputMode) {
+	Gosub ScimInit
+	Gosub NativeInit
+	Gosub DuboInit
+	return
+}
+return
