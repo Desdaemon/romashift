@@ -148,7 +148,7 @@ If you mess up, use "Reset Default Tables".
 Mappings are carried over from SCIM, with the following additions:
 
 'yeo' and 'y', 'u' and 'w' are interchangeable if they stand alone.
-'c' is interchangeable with 'k' and 'q'.
+'c' is interchangeable with 'ch'.
 'f' is the commit key.
 
 Double consonants are either double or uppercase letters.

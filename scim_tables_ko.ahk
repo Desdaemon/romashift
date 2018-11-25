@@ -192,7 +192,7 @@ current_string =
 Send {Right}
 Send %A_ThisHotkey%
 return
-
+; "
 SearchLoop:
 result := chara.item(current_string)
 if (result <> "") {
