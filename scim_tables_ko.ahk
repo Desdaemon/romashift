@@ -139,10 +139,8 @@ return
 
 Space::
 Enter::
-;ToolTip,
-if (A_PriorKey <> A_ThisHotkey) {
+if (current_string <> "")
 	Send {Right}
-}
 Send {%A_ThisHotkey%}
 current_string = 
 return
@@ -212,5 +210,4 @@ if (result <> "") {
 	return
 }
 return
-
 
