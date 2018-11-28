@@ -5,7 +5,7 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 ; SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-;SetBatchLines, -1
+SetBatchLines, -1
 FileEncoding, UTF-8-RAW
 
 ; Update after every major build!

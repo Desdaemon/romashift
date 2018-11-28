@@ -25,6 +25,16 @@ IniRead, R_RefreshDelay, rm_settings.ini, System, RefreshDelay, 5
 ; V2.1+
 IniRead, R_CurrentTable, rm_settings.ini, General, ScimTable
 
+freq =
+t0 =
+t1 =
+t_sum =
+t_avg =
+t_count =
+t_max =
+t_min := 100
+DllCall("QueryPerformanceFrequency", "Int64*", freq)
+
 Gosub ScimInit
 Gosub NativeInit
 Gosub DuboInit

@@ -79,6 +79,25 @@ Sleep 1000
 TrayTip, RomaShift for Dubeolsik, failed to reload.,3
 return
 
+TimerStart:
+DllCall("QueryPerformanceCounter", "Int64*", t0)
+return
+
+TimerStop:
+DllCall("QueryPerformanceCounter", "Int64*", t1)
+dt := Round((t1-t0) / freq * 1000, 3)
+t_sum += dt
+if (dt > t_max) {
+	t_max := dt
+}
+if (dt < t_min) {
+	t_min := dt
+}
+t_count++
+t_avg := Round(t_sum / t_count, 3)
+ToolTip, % "dt " dt "ms, avg " t_avg "ms min " t_min "ms max " t_max "ms", 640, 480
+return
+
 ; Initializations for SCIM Romaja
 ScimInit:
 if (R_InputMode = 3) {
@@ -107,6 +126,7 @@ if (R_InputMode = 1) {
 	HC := 0 ; Head character, initial consonant
 	MC := 0	; Middle character, medial vowels
 	TC := 0 ; Tail character, final consonants
+	current_empty =
 	
 	fblock := ""
 	current_block := 0
