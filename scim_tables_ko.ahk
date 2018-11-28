@@ -1,12 +1,5 @@
 ﻿;SCIM Romaja, uses SCIM Hangul Romaja table to provide human-friendly input
 ;User-customizable, can be adopted for other tables
-;SetBatchLines, -1
-
-;chara := ComObjCreate("Scripting.Dictionary")
-;current_string = 
-;current_chara = 
-;current_key = 
-;isActive := 0
 
 #If (isActive && R_InputMode = 3)
 q::
@@ -35,28 +28,41 @@ v::
 b::
 n::
 m::
+Gosub TimerStart
+
 current_string .= A_ThisHotkey	; append key to stack
-;ToolTip, %current_string%, A_CaretX, A_CaretY + 35
 Gosub SearchLoop	; search for chara, return chara if exist
 
 ; if not exist
 
-theft_string := SubStr(current_string, -1)	; take last 2 characters for theft
+theft_string := SubStr(current_string, -1)
+theft_result := chara.item(theft_string)	; take last 2 characters for theft
 
-if (chara.item(theft_string) <> "") {
+if (theft_result <> "") {
 	current_string := SubStr(current_string, 1, -2)
-	Gosub SubSearchLoop
-	Send {Right}
+	result := chara.item(current_string)
+	
+	Send % result theft_result
+	Send +{Left}
 	current_string := theft_string
-	Gosub SearchLoop
+	
+	Gosub TimerStop
+	
 	return
-} else {
+} 
+else
+{
 	theft_string := SubStr(theft_string, 2)
 	current_string := SubStr(current_string, 1, -1)
-	Gosub SubSearchLoop
-	Send {Right}
+	theft_result := chara.item(theft_string)
+	result := chara.item(current_string)
+	
+	Send % result theft_result
+	Send +{Left}
 	current_string := theft_string
-	Gosub SearchLoop
+	
+	Gosub TimerStop
+	
 	return
 }
 return
@@ -87,27 +93,38 @@ return
 +b::
 +n::
 +m::
+Gosub TimerStart
 current_key := Format("{:U}", LTrim(A_ThisHotkey, "+"))
 current_string .= current_key
-;ToolTip, %current_string%, A_CaretX, A_CaretY + 35
 Gosub SearchLoop
 
-theft_string := SubStr(current_string, -1)	; take last 2 characters for theft
+theft_string := SubStr(current_string, -1)
+theft_result := chara.item(theft_string)	; take last 2 characters for theft
 
-if (chara.item(theft_string) <> "") {
+if (theft_result <> "") {
 	current_string := SubStr(current_string, 1, -2)
-	Gosub SubSearchLoop
-	Send {Right}
+	result := chara.item(current_string)
+	
+	Send % result theft_result
+	Send +{Left}
 	current_string := theft_string
-	Gosub SearchLoop
+	
+	Gosub TimerStop
 	return
-} else {
+}
+else
+{
 	theft_string := SubStr(theft_string, 2)
 	current_string := SubStr(current_string, 1, -1)
-	Gosub SubSearchLoop
-	Send {Right}
+	theft_result := chara.item(theft_string)
+	result := chara.item(current_string)
+	
+	Send % result theft_result
+	Send +{Left}
 	current_string := theft_string
-	Gosub SearchLoop
+	
+	Gosub TimerStop
+	
 	return
 }
 return
@@ -121,8 +138,8 @@ current_string =
 return
 
 *Backspace::
+Gosub TimerStart
 current_string := SubStr(current_string, 1, -1)
-;ToolTip, %current_string%, A_CaretX, A_CaretY + 35
 if (current_string = "") {
 	Send {Backspace}
 	return
@@ -191,23 +208,16 @@ Send {Right}
 Send %A_ThisHotkey%
 return
 ; "
+
 SearchLoop:
 result := chara.item(current_string)
 if (result <> "") {
 	current_chara := result
-	Send {%current_chara%}
-	Send +{Left}
+	Send %current_chara%+{Left}
+	Gosub TimerStop
+	
 	Exit
 }
 return
 
-SubSearchLoop:
-result := chara.item(current_string)
-if (result <> "") {
-	current_chara := result
-	Send {%current_chara%}
-	Send +{Left}
-	return
-}
-return
 

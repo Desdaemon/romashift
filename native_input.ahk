@@ -1,18 +1,6 @@
 ﻿; Native Romaja, no pre-existing IMEs dependencies, perfect for self-installation.
 ; Hanja conversion available via Korean IME if installed and enabled
 
-;HC := 0 ; Head character, initial consonant
-;MC := 0	; Middle character, medial vowels
-;TC := 0 ; Tail character, final consonants
-
-;fblock := ""
-;current_block := 0
-;TC_HC := {0:11,1:0,2:0,3:9,4:2,5:12,6:18,7:3,8:5,9:0,10:6,11:7,12:9,13:16,14:17,15:18,16:6,17:7,18:9,19:9,20:9,21:11,22:12,23:14,24:15,25:16,26:17,27:18}
-;TC_prev := {0:0,1:0,2:1,3:1,4:0,5:4,6:4,7:0,8:0,9:8,10:8,11:8,12:8,13:8,14:8,15:8,16:0,17:0,18:17,19:0,20:19,21:0,22:0,23:0,24:0,25:0,26:0,27:0}
-;HC_prev := {0:"ㄱ",1:"ㄲ",2:"ㄴ",3:"ㄷ",4:"ㄸ",5:"ㄹ",6:"ㅁ",7:"ㅂ",8:"ㅃ",9:"ㅅ",10:"ㅆ",11:"ㅇ",12:"ㅈ",13:"ㅉ",14:"ㅊ",15:"ㅋ",16:"ㅌ",17:"ㅍ",18:"ㅎ"}
-;HC_double := {1:0,4:3,8:7,10:9,13:12}
-;MC_prev := {1:0,2:6,3:2,4:"",5:4,6:"",7:6,8:"",9:8,10:9,11:8,12:"",13:"",14:13,15:14,16:13,17:"",18:"",19:18,20:""}
-
 ; Standard workflow:
 ; Start: Print initial consonant and update HC accordingly, shift
 ; ->	 Update medial vowel, build block, shift
@@ -23,6 +11,7 @@ HC := 0
 MC := 0
 TC := 0
 current_block := 0
+current_empty := 1
 return
 
 BlockCommit:
@@ -42,8 +31,10 @@ else {
 return
 
 BlockUpdate:
+Gosub TimerStart
 Gosub BlockBuild
 Gosub BlockShift
+Gosub TimerStop
 return
 
 BlockBuild:
@@ -52,12 +43,15 @@ BlockBuild:
 chara := HC*588 + MC*28 + TC + 44032 ; formula from Wikipedia
 hex := Format("0x{:X}",chara)
 fblock := Chr(hex)
+
 ; debug
 Send %fblock%
+current_empty := 0
+;Gosub TrayInfo
 return
 
 ;TrayInfo:
-;tooltip_text = % "Current block " current_block " HC " HC " MC " MC " TC " TC " chara " fblock
+;tooltip_text = % "Current block " current_block " HC " HC " MC " MC " TC " TC " chara " fblock " current_empty " current_empty
 ;Tooltip, %tooltip_text%
 ;return
 
@@ -65,9 +59,18 @@ return
 
 #If (isActive && R_InputMode = 1)
 *Space::
-doDeselect := !(A_PriorKey = "Space") ? "{Right}" : "" 
-Send %doDeselect%
+if (current_empty = 0) {
+	Send {Right}
+}
 Send {Space}
+Gosub BlockReset
+return
+
+Left::
+Right::
+Up::
+Down::
+Send {%A_ThisHotkey%}
 Gosub BlockReset
 return
 
@@ -109,7 +112,7 @@ return
 >::
 ?::
 :::
-"::
+":: ;"
 +[::
 +]::
 _::
